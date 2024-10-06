@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wild Animal Image Classification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            background-image: url('pic1.jpg');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 70px;
+            margin-top: 200px;
+            background-color: #fff;
+            background-color:antiquewhite;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        #imageInput {
+            display: block;
+            margin: 10px auto;
+        }
+        button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            background-color:orange;
+            color: black ;
+            font-style:normal;
+            border:solid;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Wild Animal Image Classification</h1>
+        <input type="file" id="imageInput" accept="image/*">
+        <button onclick="predictImage()">Predict</button>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        function predictImage() {
+            var input = document.getElementById('imageInput').files[0];
+            var reader = new FileReader();
+
+            reader.onloadend = function () {
+                var base64String = reader.result.replace("data:", "").replace(/^.+,/, "");
+
+                fetch('http://localhost:5000/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ image: base64String })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('result').innerText = 'Prediction: ' + data.label;
+                    console.log('pic show');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            };
+
+            reader.readAsDataURL(input);
+        }
+    </script>
+</body>
+</html>
